@@ -1,5 +1,4 @@
 """PhD Finder — main orchestration script for the daily GitHub Actions job."""
-
 import json
 import logging
 import os
@@ -39,19 +38,31 @@ def main():
 
     # 1. Scrape
     from scraper import scrape_all, load_existing, merge_with_existing
+
     log.info("Step 1: Scraping FindAPhD…")
     new_phds = scrape_all(fetch_details=True)
 
-    print(f"DEBUG: DATA_PATH = {DATA_PATH.resolve()}")
-    print(f"DEBUG: exists = {DATA_PATH.exists()}")
+    print("DEBUG: DATA_PATH =", DATA_PATH.resolve())
+    print("DEBUG: exists =", DATA_PATH.exists())
     with open(DATA_PATH) as f:
         raw = f.read()
-    print(f"DEBUG: raw content = {raw!r}")
+    parsed = json.loads(raw)
+    print("DEBUG parsed type:", type(parsed))
+    if isinstance(parsed, dict):
+        print("DEBUG keys:", list(parsed.keys()))
+        phds_val = parsed.get("phds")
+        print("DEBUG phds type:", type(phds_val))
+        print("DEBUG phds length:", len(phds_val) if phds_val is not None else None)
+        if phds_val:
+            print("DEBUG first item type:", type(phds_val[0]))
+            print("DEBUG first item repr:", repr(phds_val[0])[:100])
 
     existing = load_existing(DATA_PATH)
+    phds = merge_with_existing(new_phds, existing)
 
     # 2. Score
     from scorer import score_all, filter_worth_emailing
+
     log.info("Step 2: Scoring %d PhDs…", len(phds))
     phds = score_all(phds)
 
@@ -62,6 +73,7 @@ def main():
     # 4. Email
     if not skip_email:
         from emailer import send_batch
+
         candidates = filter_worth_emailing(phds, min_score=min_score)
         log.info("Step 3: Emailing %d supervisor(s)…", len(candidates))
         if candidates:
@@ -80,6 +92,7 @@ def main():
     # 5. Log to Google Sheets
     if not skip_sheets:
         from sheets_logger import sync_to_sheets
+
         log.info("Step 4: Syncing to Google Sheets…")
         try:
             sync_to_sheets(phds)
