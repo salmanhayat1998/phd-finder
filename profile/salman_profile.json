@@ -1,0 +1,67 @@
+{
+  "name": "Salman Hayat",
+  "email": "salmanhayat16@gmail.com",
+  "nationality": "Pakistani",
+  "visa_status": "UK Graduate Visa",
+  "visa_expiry": "2027-02-28",
+  "funding_eligibility": ["non-EU", "international"],
+  "education": [
+    {
+      "degree": "MSc Computer Games",
+      "institution": "University of Essex",
+      "year": 2024,
+      "dissertation": "AI-Native NPC agents — designing game characters driven by large language models and autonomous agent architectures"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Senior Unity Developer",
+      "domain": "Games",
+      "skills": ["Unity", "C#", "AI", "NPC", "game systems", "procedural generation"]
+    }
+  ],
+  "research_interests": [
+    "AI in games",
+    "NPC behaviour",
+    "autonomous agents",
+    "large language models",
+    "reinforcement learning",
+    "procedural content generation",
+    "human-computer interaction",
+    "game AI",
+    "affective computing",
+    "simulation"
+  ],
+  "technical_skills": [
+    "Unity", "C#", "Python", "machine learning", "deep learning",
+    "reinforcement learning", "LLMs", "GPT", "game development",
+    "AI agent design", "NPC systems", "procedural generation"
+  ],
+  "scoring_keywords": {
+    "high": [
+      "game AI", "NPC", "non-player character", "game agent",
+      "reinforcement learning", "LLM", "large language model",
+      "autonomous agent", "procedural", "Unity", "game development",
+      "AI-driven", "intelligent agent", "game simulation"
+    ],
+    "medium": [
+      "machine learning", "deep learning", "neural network",
+      "human-computer interaction", "HCI", "virtual reality", "VR",
+      "computer vision", "natural language processing", "NLP",
+      "affective computing", "simulation", "interactive media",
+      "digital games", "serious games", "metaverse"
+    ],
+    "low": [
+      "artificial intelligence", "AI", "computer science",
+      "software engineering", "data science", "robotics",
+      "cognitive systems", "user experience", "UX"
+    ]
+  },
+  "outreach_template": {
+    "signature": "Salman Hayat\nMSc Computer Games, University of Essex (2024)\nSenior Unity Developer | AI-Native NPC Researcher\nsalmanhayat16@gmail.com",
+    "intro": "I am writing to enquire about PhD opportunities in your research group. I hold an MSc in Computer Games from the University of Essex (2024), where my dissertation investigated AI-Native NPC agents using large language models and autonomous agent architectures. I also bring four years of industry experience as a Senior Unity developer.",
+    "visa_note": "I am a Pakistani national currently on a UK Graduate Visa (valid until February 2027), fully eligible for non-EU funded positions and able to begin immediately."
+  },
+  "cv_files": [],
+  "bio": ""
+}
