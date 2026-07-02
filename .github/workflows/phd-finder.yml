@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   scrape-score-email:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: phd-finder
