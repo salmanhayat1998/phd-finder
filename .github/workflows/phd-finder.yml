@@ -49,7 +49,8 @@ jobs:
 
       - name: Create data directory
         run: mkdir -p data frontend/public
-
+      - name: Debug — show phds.json before run
+        run: cat data/phds.json
       - name: Run PhD Finder
         env:
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
