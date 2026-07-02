@@ -216,7 +216,8 @@ def load_existing(data_path: Path) -> dict[str, dict]:
     """Load previously scraped PhDs indexed by ID."""
     if data_path.exists():
         with open(data_path) as f:
-            phds = json.load(f)
+            data = json.load(f)
+        phds = data.get("phds", []) if isinstance(data, dict) else data
         return {p["id"]: p for p in phds}
     return {}
 
