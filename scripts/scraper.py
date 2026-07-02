@@ -35,10 +35,23 @@ def _clean(text: str) -> str:
 def _fetch_page_html(page, url: str) -> str:
     """Navigate to URL and wait for PhD cards to load."""
     try:
-        page.goto(url, wait_until="domcontentloaded", timeout=30_000)
-        # Wait for at least one PhD result card
-        page.wait_for_selector(".phd-result__body, .ResultCard, [class*='result']", timeout=15_000)
-        time.sleep(2)  # brief settle for dynamic content
+        page.goto(url, wait_until="networkidle", timeout=60_000)
+        time.sleep(3)
+        # Try multiple selectors FindAPhD has used over time
+        for sel in [
+            ".phd-result",
+            ".ResultCard",
+            "[class*='phd-result']",
+            "[class*='result-item']",
+            "h3 a[href*='/phds/']",
+            "a[href*='/phds/non-eu']",
+        ]:
+            try:
+                page.wait_for_selector(sel, timeout=8_000)
+                break
+            except PlaywrightTimeout:
+                continue
+        time.sleep(2)
         return page.content()
     except PlaywrightTimeout:
         log.warning("Timeout waiting for results on %s — returning raw HTML", url)
@@ -50,11 +63,14 @@ def _parse_listings(html: str, source_url: str) -> list[dict[str, Any]]:
     soup = BeautifulSoup(html, "lxml")
     results = []
 
-    # FindAPhD uses .phd-result divs; also try generic fallbacks
+    # Try all known FindAPhD card selectors in order
     cards = (
         soup.select(".phd-result")
         or soup.select("[class*='ResultCard']")
         or soup.select("[class*='result-item']")
+        or soup.select("[class*='phd-result']")
+        or soup.select("div[data-ga-action='phd_click']")
+        or soup.select("article")
     )
 
     for card in cards:
@@ -174,14 +190,24 @@ def scrape_all(fetch_details: bool = True) -> list[dict[str, Any]]:
     all_phds: dict[str, dict] = {}
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
+        browser = pw.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
+        )
         ctx = browser.new_context(
             user_agent=(
-                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/124.0.6367.155 Safari/537.36"
             ),
-            viewport={"width": 1280, "height": 900},
+            viewport={"width": 1366, "height": 768},
+            locale="en-GB",
+            extra_http_headers={
+                "Accept-Language": "en-GB,en;q=0.9",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            },
         )
+        # Hide webdriver property
+        ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         page = ctx.new_page()
 
         for url in SEARCH_URLS:
@@ -216,7 +242,8 @@ def load_existing(data_path: Path) -> dict[str, dict]:
     """Load previously scraped PhDs indexed by ID."""
     if data_path.exists():
         with open(data_path) as f:
-            phds = json.load(f)
+            data = json.load(f)
+        phds = data.get("phds", []) if isinstance(data, dict) else data
         return {p["id"]: p for p in phds}
     return {}
 
