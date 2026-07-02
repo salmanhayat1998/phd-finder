@@ -41,8 +41,14 @@ def main():
     from scraper import scrape_all, load_existing, merge_with_existing
     log.info("Step 1: Scraping FindAPhD…")
     new_phds = scrape_all(fetch_details=True)
+
+    print(f"DEBUG: DATA_PATH = {DATA_PATH.resolve()}")
+    print(f"DEBUG: exists = {DATA_PATH.exists()}")
+    with open(DATA_PATH) as f:
+        raw = f.read()
+    print(f"DEBUG: raw content = {raw!r}")
+
     existing = load_existing(DATA_PATH)
-    phds = merge_with_existing(new_phds, existing)
 
     # 2. Score
     from scorer import score_all, filter_worth_emailing
