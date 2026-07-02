@@ -56,7 +56,9 @@ def main():
         if phds_val:
             print("DEBUG first item type:", type(phds_val[0]))
             print("DEBUG first item repr:", repr(phds_val[0])[:100])
-
+    import inspect
+    print("DEBUG load_existing SOURCE:")
+    print(inspect.getsource(load_existing))
     existing = load_existing(DATA_PATH)
     phds = merge_with_existing(new_phds, existing)
 
